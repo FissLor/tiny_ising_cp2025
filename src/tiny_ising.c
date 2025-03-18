@@ -26,6 +26,10 @@
 #define N (L * L) // system size
 #define SEED (time(NULL)) // random seed
 
+#ifndef WHOAMI
+#define WHOAMI "I don't know who i am"
+#endif
+
 // temperature, E, E^2, E^4, M, M^2, M^4
 struct statpoint {
     double t;
@@ -113,15 +117,15 @@ int main(void)
         stat[i].m = stat[i].m2 = stat[i].m4 = 0.0;
     }
 
-    // print header
-    printf("# L: %i\n", L);
-    printf("# Minimum Temperature: %f\n", TEMP_INITIAL);
-    printf("# Maximum Temperature: %f\n", TEMP_FINAL);
-    printf("# Temperature Step: %.12f\n", TEMP_DELTA);
-    printf("# Equilibration Time: %i\n", TRAN);
-    printf("# Measurement Time: %i\n", TMAX);
-    printf("# Data Acquiring Step: %i\n", DELTA_T);
-    printf("# Number of Points: %i\n", NPOINTS);
+    // // print header
+    // printf("# L: %i\n", L);
+    // printf("# Minimum Temperature: %f\n", TEMP_INITIAL);
+    // printf("# Maximum Temperature: %f\n", TEMP_FINAL);
+    // printf("# Temperature Step: %.12f\n", TEMP_DELTA);
+    // printf("# Equilibration Time: %i\n", TRAN);
+    // printf("# Measurement Time: %i\n", TMAX);
+    // printf("# Data Acquiring Step: %i\n", DELTA_T);
+    // printf("# Number of Points: %i\n", NPOINTS);
 
     // configure RNG
     srand(SEED);
@@ -138,11 +142,16 @@ int main(void)
 
     // stop timer
     double elapsed = wtime() - start;
-    printf("# Total Simulation Time (sec): %lf\n", elapsed);
+    FILE * time_stream = fopen("time", "w");
+    printf("%lf", elapsed);
+    fprintf(time_stream, "# Total Simulation Time (sec): %lf\n", elapsed);
 
-    printf("# Temp\tE\tE^2\tE^4\tM\tM^2\tM^4\n");
+
+    FILE * table_stream = fopen("table", "w");
+
+    fprintf(table_stream, "# Temp,E,E^2,E^4,M,M^2,M^4\n");
     for (unsigned int i = 0; i < NPOINTS; ++i) {
-        printf("%lf\t%.10lf\t%.10lf\t%.10lf\t%.10lf\t%.10lf\t%.10lf\n",
+        fprintf(table_stream, "%lf,%.10lf,%.10lf,%.10lf,%.10lf,%.10lf,%.10lf\n",
                stat[i].t,
                stat[i].e / ((double)N),
                stat[i].e2 / ((double)N * N),

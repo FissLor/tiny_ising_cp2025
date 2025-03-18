@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.10)  # CMake version check
 project(tiny_ising)
 
 # Add main.cpp file of the project root directory as a source file
-set(ISING_SOURCE_FILES tiny_ising.c ising.c wtime.c)
+set(ISING_SOURCE_FILES src/tiny_ising.c src/ising.c src/wtime.c)
 
-set(DEMO_SOURCE_FILES demo.c ising.c wtime.c)
+set(DEMO_SOURCE_FILES src/demo.c src/ising.c src/wtime.c)
 
 # Add executable target with source files listed in SOURCE_FILES variable
 add_executable(tiny_ising ${ISING_SOURCE_FILES})
