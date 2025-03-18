@@ -2,62 +2,122 @@
     "version": 8,
     "configurePresets": [
         {
-            "name": "gcc",
+            "name": "gcc-O3",
             "displayName": "Configure preset using toolchain file",
             "description": "Sets Ninja generator, build and install directory",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "binaryDir": "${sourceDir}/out/${presetName}/bin/",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_FLAGS": " -O3 -Wall -Wextra",
                 "CMAKE_C_STANDARD": "11",
                 "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/${presetName}/install/"
             }
         },
         {
-            "name": "clang",
+            "name": "clang-O3",
             "displayName": "Custom configure preset",
             "description": "Sets Ninja generator, build and install directory",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "binaryDir": "${sourceDir}/out/${presetName}/bin/",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_FLAGS": " -O3 -Wall -Wextra",
                 "CMAKE_C_COMPILER": "clang",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/${presetName}/install/"
             }
         },
         {
-            "name": "icx",
+            "name": "icx-O3",
             "displayName": "Custom configure preset",
             "description": "Sets Ninja generator, build and install directory",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "binaryDir": "${sourceDir}/out/${presetName}/bin/",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug", 
+                "CMAKE_C_FLAGS": " -O3 -Wall -Wextra",
+                "CMAKE_C_COMPILER": "icx",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/${presetName}/install/"
+            }
+        },
+        {
+            "name": "gcc-O2",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/${presetName}/bin/",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_FLAGS": " -O2 -Wall -Wextra",
+                "CMAKE_C_STANDARD": "11",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/${presetName}/install/"
+            }
+        },
+        {
+            "name": "clang-O2",
+            "displayName": "Custom configure preset",
+            "description": "Sets Ninja generator, build and install directory",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/${presetName}/bin/",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_FLAGS": " -O2 -Wall -Wextra",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/${presetName}/install/"
+            }
+        },
+        {
+            "name": "icx-O2",
+            "displayName": "Custom configure preset",
+            "description": "Sets Ninja generator, build and install directory",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/${presetName}/bin/",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug", 
+                "CMAKE_C_FLAGS": " -O2 -Wall -Wextra",
                 "CMAKE_C_COMPILER": "icx",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/${presetName}/install/"
             }
         }
     ],
     "buildPresets": [
         {
-            "name": "gcc_build_preset",
+            "name": "gcc-O3_build_preset",
             "description": "",
             "displayName": "",
-            "configurePreset": "gcc"
+            "configurePreset": "gcc-O3"
         },
         {
-            "name": "clang_build_preset",
+            "name": "clang-O3_build_preset",
             "description": "",
             "displayName": "",
-            "configurePreset": "clang"
+            "configurePreset": "clang-O3"
         },
         {
-            "name": "icx_build_preset",
+            "name": "icx-O3_build_preset",
             "description": "",
             "displayName": "",
-            "configurePreset": "icx"
+            "configurePreset": "icx-O3"
+        },
+        {
+            "name": "gcc-O2_build_preset",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "gcc-O2"
+        },
+        {
+            "name": "clang-O2_build_preset",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "clang-O2"
+        },
+        {
+            "name": "icx-O2_build_preset",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "icx-O2"
         }
     ]
 }
