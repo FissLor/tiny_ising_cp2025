@@ -1,5 +1,0 @@
-,compiler,optimization_flags,L,metric,error
-0,gcc,-O3,128,0.980954,
-1,gcc,-O3,256,3.898027,
-2,gcc,-O3,512,15.614439,
-3,gcc,-O3,1024,62.497365,
