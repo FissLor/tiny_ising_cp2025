@@ -64,7 +64,7 @@
             "displayName": "Configure preset using toolchain file",
             "description": "Sets Ninja generator, build and install directory",
             "cacheVariables": {
-                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING-DXOSHIRO256PP -DZERO_PADDING -O3 -Wall -Wextra -g "
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING-DXOSHIRO256PP -DZERO_PADDING -O1 -ftree-vectorize -march=native -Wall -Wextra -g  -save-temps -fopt-info-all-optall=optimization_report "
             }
         },
         {
