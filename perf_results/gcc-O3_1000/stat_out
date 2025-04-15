@@ -1,0 +1,25 @@
+# started on Mon Mar 24 11:31:54 2025
+
+
+ Performance counter stats for '../../out/gcc-O3_1000/tiny_ising' (10 runs):
+
+        118.075,43 msec task-clock:u                     #    0,998 CPUs utilized               ( +-  7,84% )
+                 0      context-switches:u               #    0,000 /sec                      
+                 0      cpu-migrations:u                 #    0,000 /sec                      
+             1.054      page-faults:u                    #    8,926 /sec                        ( +-  0,04% )
+   649.030.189.667      instructions:u                   #    1,62  insn per cycle              ( +-  0,01% )  (38,46%)
+   401.661.082.594      cycles:u                         #    3,402 GHz                         ( +-  8,94% )  (46,15%)
+    96.931.526.167      branches:u                       #  820,929 M/sec                       ( +-  0,01% )  (46,15%)
+     2.942.746.588      branch-misses:u                  #    3,04% of all branches             ( +- 36,48% )  (46,15%)
+   167.640.737.437      L1-dcache-loads:u                #    1,420 G/sec                       ( +-  0,01% )  (46,16%)
+       366.434.469      L1-dcache-load-misses:u          #    0,22% of all L1-dcache accesses   ( +-  1,64% )  (46,16%)
+        15.979.527      LLC-loads:u                      #  135,333 K/sec                       ( +-  2,45% )  (30,77%)
+         3.530.375      LLC-load-misses:u                #   22,09% of all LL-cache accesses    ( +-  9,77% )  (30,77%)
+         5.891.949      L1-icache-load-misses:u                                                 ( +- 22,83% )  (30,77%)
+   167.665.534.147      dTLB-loads:u                     #    1,420 G/sec                       ( +-  0,01% )  (30,77%)
+         1.986.994      dTLB-load-misses:u               #    0,00% of all dTLB cache accesses  ( +-  6,92% )  (30,77%)
+         9.334.847      iTLB-loads:u                     #   79,058 K/sec                       ( +- 62,98% )  (30,77%)
+            24.390      iTLB-load-misses:u               #    0,26% of all iTLB cache accesses  ( +- 15,96% )  (30,77%)
+
+            118,27 +- 9,36 seconds time elapsed  ( +-  7,91% )
+

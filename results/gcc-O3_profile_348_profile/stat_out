@@ -1,0 +1,25 @@
+# started on Mon Mar 24 20:06:14 2025
+
+
+ Performance counter stats for '/home/lfissore/Documents/Facultad/paralela2025/tiny_ising/out/gcc-O3_profile_348/tiny_ising' (5 runs):
+
+         21.951,97 msec task-clock:u                     #    0,997 CPUs utilized               ( +-  1,39% )
+                 0      context-switches:u               #    0,000 /sec                      
+                 0      cpu-migrations:u                 #    0,000 /sec                      
+               197      page-faults:u                    #    8,974 /sec                        ( +-  0,12% )
+    62.854.650.039      instructions:u                   #    1,90  insn per cycle              ( +-  0,05% )  (38,46%)
+    33.115.287.060      cycles:u                         #    1,509 GHz                         ( +-  0,89% )  (46,16%)
+     3.505.800.132      branches:u                       #  159,703 M/sec                       ( +-  0,13% )  (46,16%)
+       211.022.242      branch-misses:u                  #    6,02% of all branches             ( +-  1,03% )  (46,16%)
+    10.621.186.161      L1-dcache-loads:u                #  483,838 M/sec                       ( +-  0,14% )  (46,17%)
+        44.883.170      L1-dcache-load-misses:u          #    0,42% of all L1-dcache accesses   ( +-  0,52% )  (46,17%)
+         2.669.463      LLC-loads:u                      #  121,605 K/sec                       ( +-  1,09% )  (30,77%)
+         1.613.712      LLC-load-misses:u                #   60,45% of all LL-cache accesses    ( +-  1,81% )  (30,77%)
+         1.326.664      L1-icache-load-misses:u                                                 ( +-  4,10% )  (30,76%)
+    10.661.743.595      dTLB-loads:u                     #  485,685 M/sec                       ( +-  0,19% )  (30,76%)
+           176.562      dTLB-load-misses:u               #    0,00% of all dTLB cache accesses  ( +-  6,88% )  (30,76%)
+           127.860      iTLB-loads:u                     #    5,825 K/sec                       ( +-  3,86% )  (30,76%)
+            88.468      iTLB-load-misses:u               #   69,19% of all iTLB cache accesses  ( +-  6,54% )  (30,76%)
+
+            22,021 +- 0,334 seconds time elapsed  ( +-  1,52% )
+
