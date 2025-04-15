@@ -1,0 +1,10 @@
+,compiler,optimization_flags,L,metric,error
+0,clang,-O2,384,23.91679,
+1,icx,-O3,384,23.371798,
+2,icx,-O2,384,23.795796,
+3,clang,-O3 -march=native,384,26.45609,
+4,clang,-O3,384,26.683609,
+5,icx,-O3 -march=native,384,24.869026,
+6,gcc,-O2,384,27.289586,
+7,gcc,-O3,384,29.7322,
+8,gcc,-O3 -march=native,384,30.706675,

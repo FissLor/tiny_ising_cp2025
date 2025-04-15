@@ -41,11 +41,26 @@ struct statpoint {
     double m4;
 };
 
+    // clear the grid
+#if defined(ZERO_PADDING)
+int grid[L+2][L+2] = { { 0 } };
+#else
+int grid[L][L] = { { 0 } };
+#endif
+
+#if defined(ZERO_PADDING)
+static void cycle(int grid[L+2][L+2],
+                  const double min, const double max,
+                  const double step, const unsigned int calc_step,
+                  struct statpoint stats[])
+
+#else
 
 static void cycle(int grid[L][L],
                   const double min, const double max,
                   const double step, const unsigned int calc_step,
                   struct statpoint stats[])
+#endif
 {
 
     assert((0 < step && min <= max) || (step < 0 && max <= min));
@@ -90,7 +105,18 @@ static void cycle(int grid[L][L],
     }
 }
 
+#if defined(ZERO_PADDING)
 
+static void init(int grid[L+2][L+2])
+{
+    for (unsigned int i = 1; i <= L; ++i) {
+        for (unsigned int j = 0; j < L; ++j) {
+            grid[i][j] = 1;
+        }
+    }
+}
+
+#else
 static void init(int grid[L][L])
 {
     for (unsigned int i = 0; i < L; ++i) {
@@ -99,16 +125,30 @@ static void init(int grid[L][L])
         }
     }
 }
+#endif
 
 
 int main(void)
 {
+
+   
     // parameter checking
     static_assert(TEMP_DELTA != 0, "Invalid temperature step");
     static_assert(((TEMP_DELTA > 0) && (TEMP_INITIAL <= TEMP_FINAL)) || ((TEMP_DELTA < 0) && (TEMP_INITIAL >= TEMP_FINAL)), "Invalid temperature range+step");
     static_assert(TMAX % DELTA_T == 0, "Measurements must be equidistant"); // take equidistant calculate()
     static_assert((L * L / 2) * 4ULL < UINT_MAX, "L too large for uint indices"); // max energy, that is all spins are the same, fits into a ulong
 
+
+      // print header
+      printf("# L: %i\n", L);
+      printf("# Minimum Temperature: %f\n", TEMP_INITIAL);
+      printf("# Maximum Temperature: %f\n", TEMP_FINAL);
+      printf("# Temperature Step: %.12f\n", TEMP_DELTA);
+      printf("# Equilibration Time: %i\n", TRAN);
+      printf("# Measurement Time: %i\n", TMAX);
+      printf("# Data Acquiring Step: %i\n", DELTA_T);
+      printf("# Number of Points: %i\n", NPOINTS);
+      fflush(stdout);
     // the stats
     struct statpoint stat[NPOINTS];
     for (unsigned int i = 0; i < NPOINTS; ++i) {
@@ -117,24 +157,19 @@ int main(void)
         stat[i].m = stat[i].m2 = stat[i].m4 = 0.0;
     }
 
-    // // print header
-    // printf("# L: %i\n", L);
-    // printf("# Minimum Temperature: %f\n", TEMP_INITIAL);
-    // printf("# Maximum Temperature: %f\n", TEMP_FINAL);
-    // printf("# Temperature Step: %.12f\n", TEMP_DELTA);
-    // printf("# Equilibration Time: %i\n", TRAN);
-    // printf("# Measurement Time: %i\n", TMAX);
-    // printf("# Data Acquiring Step: %i\n", DELTA_T);
-    // printf("# Number of Points: %i\n", NPOINTS);
+  
 
     // configure RNG
     srand(SEED);
 
+    #if(XOSHIRO256PP)
+    init_xoshiro();
+    #endif
+
     // start timer
     double start = wtime();
 
-    // clear the grid
-    int grid[L][L] = { { 0 } };
+
     init(grid);
 
     // temperature increasing cycle

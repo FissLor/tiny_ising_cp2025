@@ -1,120 +1,334 @@
 {
     "version": 8,
     "configurePresets": [
+
         {
-            "name": "gcc-O3",
-            "displayName": "Configure preset using toolchain file",
-            "description": "Sets Ninja generator, build and install directory",
+            "name": "gcc-default",
+            "displayName": "Compile using gcc with -O3",
+            "description": "Uses Ninja generator, -Wall and -Wextra flags are used",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/${presetName}/bin/",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_C_FLAGS": " -O3 -Wall -Wextra",
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O3 -Wall -Wextra",
                 "CMAKE_C_STANDARD": "11",
                 "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/${presetName}/install/"
+            }
+        },
+        {
+            "name": "gcc-O3",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory"
+
+        },
+        {
+            "name": "gcc-O3_profile",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O3 -Wall -Wextra -g3"
+            }
+        },  {
+            "name": "gcc-O0_profile",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O0 -Wall -Wextra -g3"
+            }
+        },
+        {
+            "name": "xoroshift",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O3 -Wall -Wextra -g -DXOSHIRO256PP"
+            }
+        },
+        {
+            "name": "zero_padding",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING-DZERO_PADDING -O3 -Wall -Wextra -g "
+            }
+        },
+
+        {
+            "name": "both",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING-DXOSHIRO256PP -DZERO_PADDING -O3 -Wall -Wextra -g "
+            }
+        },
+        {
+            "name": "gcc-O3-march-native",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O3 -Wall -Wextra -march=native"
+            }
+        },
+        {
+            "name": "gcc-O2",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O2 -Wall -Wextra"
+            }
+        },
+        {
+            "name": "gcc-O1",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O1 -Wall -Wextra"
+            }
+        },
+        {
+            "name": "gcc-O0",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O0 -Wall -Wextra"
+            }
+        },
+        {
+            "name": "clang-default",
+            "displayName": "Compile using clang with -O3",
+            "description": "Uses Ninja generator, -Wall and -Wextra flags are used",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O3 -Wall -Wextra",
+                "CMAKE_C_COMPILER": "clang",
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/${presetName}/install/"
             }
         },
         {
             "name": "clang-O3",
+            "inherits":"clang-default",
+            "displayName": "Custom configure preset",
+            "description": "Sets Ninja generator, build and install directory"
+        },
+        {
+            "name": "clang-O3-march-native",
+            "inherits":"clang-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O3 -Wall -Wextra -march=native"
+            }
+        },
+        {
+            "name": "clang-O2",
+            "inherits":"clang-default",
             "displayName": "Custom configure preset",
             "description": "Sets Ninja generator, build and install directory",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/${presetName}/bin/",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_C_FLAGS": " -O3 -Wall -Wextra",
-                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O2 -Wall -Wextra"
+            }
+        },
+        {
+            "name": "clang-O1",
+            "inherits":"clang-default",
+            "displayName": "Custom configure preset",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O1 -Wall -Wextra"
+            }
+        },
+        {
+            "name": "clang-O0",
+            "inherits":"clang-default",
+            "displayName": "Custom configure preset",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O0 -Wall -Wextra"
+            }
+        },
+        {
+            "name": "icx-default",
+            "displayName": "Compile using icx with -O3",
+            "description": "Uses Ninja generator, -Wall and -Wextra flags are used",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug", 
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O3 -Wall -Wextra",
+                "CMAKE_C_COMPILER": "icx",
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/${presetName}/install/"
             }
         },
         {
             "name": "icx-O3",
+            "inherits":"icx-default",
             "displayName": "Custom configure preset",
-            "description": "Sets Ninja generator, build and install directory",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/${presetName}/bin/",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug", 
-                "CMAKE_C_FLAGS": " -O3 -Wall -Wextra",
-                "CMAKE_C_COMPILER": "icx",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/${presetName}/install/"
-            }
+            "description": "Sets Ninja generator, build and install directory"
         },
         {
-            "name": "gcc-O2",
+            "name": "icx-O3-march-native",
+            "inherits":"icx-default",
             "displayName": "Configure preset using toolchain file",
             "description": "Sets Ninja generator, build and install directory",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/${presetName}/bin/",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_C_FLAGS": " -O2 -Wall -Wextra",
-                "CMAKE_C_STANDARD": "11",
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/${presetName}/install/"
-            }
-        },
-        {
-            "name": "clang-O2",
-            "displayName": "Custom configure preset",
-            "description": "Sets Ninja generator, build and install directory",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/${presetName}/bin/",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_C_FLAGS": " -O2 -Wall -Wextra",
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/${presetName}/install/"
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O3 -Wall -Wextra -march=native"
             }
         },
         {
             "name": "icx-O2",
+            "inherits":"icx-default",
             "displayName": "Custom configure preset",
             "description": "Sets Ninja generator, build and install directory",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/${presetName}/bin/",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug", 
-                "CMAKE_C_FLAGS": " -O2 -Wall -Wextra",
-                "CMAKE_C_COMPILER": "icx",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/${presetName}/install/"
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O2 -Wall -Wextra"
+            }
+        },
+        {
+            "name": "icx-O1",
+            "inherits":"icx-default",
+            "displayName": "Custom configure preset",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O1 -Wall -Wextra"
+            }
+        },
+        {
+            "name": "icx-O0",
+            "inherits":"icx-default",
+            "displayName": "Custom configure preset",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DZERO_PADDING -O0 -Wall -Wextra"
             }
         }
     ],
     "buildPresets": [
         {
-            "name": "gcc-O3_build_preset",
+            "name": "gcc-O3",
             "description": "",
             "displayName": "",
             "configurePreset": "gcc-O3"
         },
         {
-            "name": "clang-O3_build_preset",
+            "name": "clang-O3",
             "description": "",
             "displayName": "",
             "configurePreset": "clang-O3"
         },
         {
-            "name": "icx-O3_build_preset",
+            "name": "icx-O3",
             "description": "",
             "displayName": "",
             "configurePreset": "icx-O3"
         },
         {
-            "name": "gcc-O2_build_preset",
+            "name": "gcc-O0",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "gcc-O0"
+        },
+        {
+            "name": "clang-O0",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "clang-O0"
+        },
+        {
+            "name": "icx-O0",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "icx-O0"
+        },
+        {
+            "name": "gcc-O1",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "gcc-O1"
+        },
+        {
+            "name": "clang-O1",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "clang-O1"
+        },
+        {
+            "name": "icx-O1",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "icx-O1"
+        },
+        {
+            "name": "gcc-O3-march-native",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "gcc-O3-march-native"
+        },
+        {
+            "name": "gcc-O3_profile",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "gcc-O3_profile"
+        },
+        {
+            "name": "gcc-O0_profile",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "gcc-O0_profile"
+        },
+        {
+            "name": "xoroshift",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "xoroshift"
+        },
+        {
+            "name": "zero_padding",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "zero_padding"
+        },
+        {
+            "name": "both",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "both"
+        },
+        {
+            "name": "clang-O3-march-native",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "clang-O3-march-native"
+        },
+        {
+            "name": "icx-O3-march-native",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "icx-O3-march-native"
+        },
+        {
+            "name": "gcc-O2",
             "description": "",
             "displayName": "",
             "configurePreset": "gcc-O2"
         },
         {
-            "name": "clang-O2_build_preset",
+            "name": "clang-O2",
             "description": "",
             "displayName": "",
             "configurePreset": "clang-O2"
         },
         {
-            "name": "icx-O2_build_preset",
+            "name": "icx-O2",
             "description": "",
             "displayName": "",
             "configurePreset": "icx-O2"

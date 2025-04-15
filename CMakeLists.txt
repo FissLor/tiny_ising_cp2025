@@ -9,6 +9,7 @@ set(DEMO_SOURCE_FILES src/demo.c src/ising.c src/wtime.c)
 # Add executable target with source files listed in SOURCE_FILES variable
 add_executable(tiny_ising ${ISING_SOURCE_FILES})
 
+target_compile_definitions(tiny_ising PUBLIC L=${L} TRAN=${TRAN})
 target_link_libraries(tiny_ising m)
 
 find_package(glfw3 3.3 REQUIRED)
