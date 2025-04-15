@@ -5,6 +5,13 @@ limpiar codigo a la version mas performante de LAB1
 # Simtool
 Necesidades para mostrar vectorizacion?
 
+
+# Cache
+
+Probar: 
+
+- Valgrind cache sim
+
 # Auto Vectorizacion
 Probar:
 - Red Black algorithm
@@ -13,7 +20,14 @@ Probar:
 - finfo-opt gcc 
 
 
+# Reporte Baseline LAB1
 
+Medir:
+- Cache misses
+
+Reortar:
+ - Assembler emitido
+ - finfo-opt gcc de base
 
 # Assembler
 
