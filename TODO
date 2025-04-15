@@ -1,37 +1,16 @@
 # Simtool
-Agregar opcion para parametrizar L y tiempo de simulacion
-Agregar graficas magnetizacion y energia ambas vs t°
-juntar resultados, distintos archivos, mismo archivo y cada binario sabe quien es
+Necesidades para mostrar vectorizacion?
 
-# Metrica
-Definir bien la metrica:
-- paso de montecarlo: LXL
-- TRAN
-- TMAX
-- TEMP_INITIAL
-- TEMP_FINAL
-- TEMP_DELTA
+# Auto Vectorizacion
+Probar:
+- Red Black algorithm
+- restrict
+- OMP simd
+- finfo-opt gcc 
 
 
 
-metrica: t / (LXL * n_veces_update)
 
+# Assembler
 
-
-# Simulaciones
-
-
-
-Probar optimizaciones: padding grilla, condicion periodica de contorno vs condicion cerrada de contorno 
-
-
-Agregar mas simulaciones a mayor tamaño de grilla hasta exceder $L3
-
-variar pasos de montecarlo
-
-comparaciones de compilacion
-
-simulacion optimizado 
-
-simular potencia de 2 (padding L-2) 
-
+Documentar Assembler emitido para cada caso
