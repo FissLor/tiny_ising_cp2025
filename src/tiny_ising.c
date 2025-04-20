@@ -69,16 +69,29 @@ static void cycle(int grid[L][L],
     unsigned int index = 0;
     for (double temp = min; modifier * temp <= modifier * max; temp += step) {
 
+        #if defined(BOLTZMANN)
+        init_boltzmann(temp);
+        #endif
+
         // equilibrium phase
         for (unsigned int j = 0; j < TRAN; ++j) {
+            #if !defined(AVX2_INTRINSICS)
             update(temp, grid);
+            #else
+            update(grid);
+            #endif
+
         }
 
         // measurement phase
         unsigned int measurements = 0;
         double e = 0.0, e2 = 0.0, e4 = 0.0, m = 0.0, m2 = 0.0, m4 = 0.0;
         for (unsigned int j = 0; j < TMAX; ++j) {
+            #if !defined(AVX2_INTRINSICS)
             update(temp, grid);
+            #else
+            update(grid);
+            #endif
             if (j % calc_step == 0) {
                 double energy = 0.0, mag = 0.0;
                 int M_max = 0;
@@ -164,6 +177,13 @@ int main(void)
 
     #if(XOSHIRO256PP)
     init_xoshiro();
+    #endif
+
+    #if defined(AVX2_INTRINSICS)
+    init_rng256((uint64_t)time(NULL));
+    init_constants();
+    #elif defined(AVX512F_INTRINSICS)
+    init_rng_state((uint64_t)time(NULL));
     #endif
 
     // start timer
