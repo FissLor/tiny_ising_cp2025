@@ -9,7 +9,15 @@
  * Debugging: Ezequiel Ferrero
  */
 
-#include "ising.h"
+#if defined(AVX2_INTRINSICS) || defined(AVX512F_INTRINSICS)
+    #include "ising_intrinsics.h"
+#elif defined(RB_UPDATE)
+    #include "ising_rb.h"
+#else
+    #include "ising.h"
+#endif
+
+
 #include "params.h"
 #include "wtime.h"
 
@@ -153,15 +161,15 @@ int main(void)
 
 
       // print header
-      printf("# L: %i\n", L);
-      printf("# Minimum Temperature: %f\n", TEMP_INITIAL);
-      printf("# Maximum Temperature: %f\n", TEMP_FINAL);
-      printf("# Temperature Step: %.12f\n", TEMP_DELTA);
-      printf("# Equilibration Time: %i\n", TRAN);
-      printf("# Measurement Time: %i\n", TMAX);
-      printf("# Data Acquiring Step: %i\n", DELTA_T);
-      printf("# Number of Points: %i\n", NPOINTS);
-      fflush(stdout);
+    //   printf("# L: %i\n", L);
+    //   printf("# Minimum Temperature: %f\n", TEMP_INITIAL);
+    //   printf("# Maximum Temperature: %f\n", TEMP_FINAL);
+    //   printf("# Temperature Step: %.12f\n", TEMP_DELTA);
+    //   printf("# Equilibration Time: %i\n", TRAN);
+    //   printf("# Measurement Time: %i\n", TMAX);
+    //   printf("# Data Acquiring Step: %i\n", DELTA_T);
+    //   printf("# Number of Points: %i\n", NPOINTS);
+    //   fflush(stdout);
     // the stats
     struct statpoint stat[NPOINTS];
     for (unsigned int i = 0; i < NPOINTS; ++i) {

@@ -64,7 +64,47 @@
             "displayName": "Configure preset using toolchain file",
             "description": "Sets Ninja generator, build and install directory",
             "cacheVariables": {
-                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DBOLTZMANN -DAVX2_INTRINSICS -DZERO_PADDING-DXOSHIRO256PP -DZERO_PADDING -O1 -ftree-vectorize -march=native -Wall -Wextra -g  -save-temps -fno-asynchronous-unwind-tables -fopenmp -fno-exceptions -fno-rtti -fverbose-asm -masm=intel  -fopt-info-all-optall=optimization_report "
+                "CMAKE_C_FLAGS": "-DZERO_PADDING -DXOSHIRO256PP  -O1 -ftree-vectorize -march=native -Wall -Wextra -g  -save-temps -fno-asynchronous-unwind-tables -fopenmp -fno-exceptions  -fverbose-asm -masm=intel  -fopt-info-all-optall=optimization_report "
+            }
+        },
+        {
+            "name": "base",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP  -DZERO_PADDING -O1 -ftree-vectorize -march=native -Wall -Wextra -g  -save-temps -fno-asynchronous-unwind-tables -fopenmp -fno-exceptions  -fverbose-asm -masm=intel  -fopt-info-all-optall=optimization_report ",
+                "ising_ver":"base"
+            }
+        },
+        {
+            "name": "rb_update",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DRB_UPDATE -DZERO_PADDING  -O1 -ftree-vectorize -march=native -Wall -Wextra -g  -save-temps -fno-asynchronous-unwind-tables -fopenmp -fno-exceptions  -fverbose-asm -masm=intel  -fopt-info-all-optall=optimization_report ",
+                "ising_ver":"rb"
+            }
+        },
+        {
+            "name": "rb_update_boltzmann",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DRB_UPDATE -DBOLTZMANN  -DZERO_PADDING -O1 -ftree-vectorize -march=native -Wall -Wextra -g  -save-temps -fno-asynchronous-unwind-tables -fopenmp -fno-exceptions  -fverbose-asm -masm=intel  -fopt-info-all-optall=optimization_report ",
+                "ising_ver":"rb"
+            }
+        },
+        {
+            "name": "intrinsics",
+            "inherits":"gcc-default",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-DXOSHIRO256PP -DBOLTZMANN -DAVX2_INTRINSICS -DZERO_PADDING-DXOSHIRO256PP -DZERO_PADDING -O1 -ftree-vectorize -march=native -Wall -Wextra -g  -save-temps -fno-asynchronous-unwind-tables -fopenmp -fno-exceptions  -fverbose-asm -masm=intel  -fopt-info-all-optall=optimization_report ",
+                "ising_ver":"intrinsics"
             }
         },
         {
@@ -326,6 +366,30 @@
             "description": "",
             "displayName": "",
             "configurePreset": "clang-O2"
+        },
+        {
+            "name": "base",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "base"
+        },
+        {
+            "name": "rb_update",
+            "description": "",
+            "displayName": "",
+            "configurePreset":  "rb_update"
+        },
+        {
+            "name": "rb_update_boltzmann",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "rb_update_boltzmann"
+        },
+        {
+            "name": "intrinsics",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "intrinsics"
         },
         {
             "name": "icx-O2",

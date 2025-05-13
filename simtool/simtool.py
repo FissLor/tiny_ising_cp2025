@@ -34,8 +34,12 @@ profile_presets = {
 
 optimization_presets = {
     "xoroshift":                {"compiler": "gcc",   "optimization_flags": "-O3"},
-    "zero_padding":                {"compiler": "gcc",   "optimization_flags": "-O3"},
-    "both":                {"compiler": "gcc",   "optimization_flags": "-O3"},
+    "zero_padding":             {"compiler": "gcc",   "optimization_flags": "-O3"},
+    "both":                     {"compiler": "gcc",   "optimization_flags": "-O3"},
+
+    "base":                     {"compiler": "gcc",   "optimization_flags": "-O3"},
+    "rb_update_boltzmann":      {"compiler": "gcc",   "optimization_flags": "-O3"},
+    "intrinsics":               {"compiler": "gcc",   "optimization_flags": "-O3"},
 }
 
 
@@ -301,25 +305,31 @@ def problem_size_test(L_values, presets=None):
     
     Parameters:
         L_values (iterable of int): Different problem sizes to test.
-        presets (list of str, optional): Specific presets to run. Defaults to all presets in compiler_presets.
+        presets (list of str, optional): Specific presets to run. Defaults to ['gcc-O3'].
     
     Returns:
-        pandas.DataFrame: Results with columns: compiler, optimization_flags, L, metric, error.
+        pandas.DataFrame: Results with columns: preset, compiler, optimization_flags, L, metric, error.
     """
     if presets is None:
         presets = ['gcc-O3']
     
     results = []
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        futures = []
-        for preset in presets:
-            for L in L_values:
-                futures.append(executor.submit(build_and_run, preset, L))
+        # Map each future to its preset
+        futures = {
+            executor.submit(build_and_run, preset, L): preset
+            for preset in presets
+            for L in L_values
+        }
         for future in concurrent.futures.as_completed(futures):
+            preset = futures[future]
             result = future.result()
+            # inject the preset name into the result dict
+            result["preset"] = preset
             print(result)
             results.append(result)
     
+    # Now the DataFrame will include a 'preset' column
     return pd.DataFrame(results)
 
 def montecarlo_step_test(TRAN_values,L=384, presets=None):

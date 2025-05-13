@@ -2,7 +2,15 @@ cmake_minimum_required(VERSION 3.10)  # CMake version check
 project(tiny_ising)
 
 # Add main.cpp file of the project root directory as a source file
-set(ISING_SOURCE_FILES src/tiny_ising.c src/ising.c src/wtime.c)
+
+if(ising_ver STREQUAL "base")
+    set(ISING_SOURCE_FILES src/tiny_ising.c src/ising.c src/wtime.c)
+elseif (ising_ver STREQUAL "rb")
+    set(ISING_SOURCE_FILES src/tiny_ising.c  src/ising_rb.c src/wtime.c)
+elseif (ising_ver STREQUAL "intrinsics")
+    set(ISING_SOURCE_FILES src/tiny_ising.c src/ising_intrinsics.c src/wtime.c)
+endif()
+
 
 set(DEMO_SOURCE_FILES src/demo.c src/ising.c src/wtime.c)
 
