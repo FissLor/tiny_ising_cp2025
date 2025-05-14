@@ -146,6 +146,7 @@ void update(int grid[L+2][L+2]) {
 #include <time.h>
 #include <math.h>
 #include "xoshiropp.h"
+#include "omp.h"
 
 // ————— Globals —————
 
@@ -153,6 +154,9 @@ void update(int grid[L+2][L+2]) {
 static float exp_dE[5] __attribute__((aligned(32)));  
 // 8‑lane xorshift RNG state
 static __m256i rng_state256;
+
+// Thread-private RNG state
+#pragma omp threadprivate(rng_state256)
 
 
 // precomputed constant vectors:
@@ -185,6 +189,17 @@ void init_rng256(uint64_t seed) {
     );
 }
 
+
+
+// A little helper to seed each thread’s RNG differently:
+void seed_threads(uint64_t base_seed) {
+    #pragma omp parallel
+    {
+        int tid = omp_get_thread_num();
+        init_rng256(base_seed + tid);  // seeds rng_state256 for this thread
+    }
+}
+
 void init_xoshiro(){
     xoshiro_state[0] = rand();
     xoshiro_state[1] = rand();
@@ -208,22 +223,24 @@ void init_constants(void) {
     V_TWO     = _mm256_set1_epi32(2);
     V_ADD8    = _mm256_set1_epi32(8);
     V_ZERO_F  = _mm256_set1_ps(0.0f);
+
+    seed_threads((uint64_t)time(NULL));
 }
 
 // ————— AVX2 red–black Metropolis update —————
 void update(int grid[L+2][L+2]) {
     const int maxJ = L - 14;  // highest j for which j+14 ≤ L
     for (int color = 0; color < 2; ++color) {
-        #pragma omp parallel for
+        #pragma omp parallel for schedule(static)
         for (int i = 1; i <= L; ++i) {
             int *row  = &grid[i][0];
             int *rowU = &grid[i-1][0];
             int *rowD = &grid[i+1][0];
-
+            
             // start at j0 so that (i+j)%2 == color
             int j0 = ((i + color) & 1) ? 1 : 2;
             int j;
-
+            
             // --- vectorized blocks (8 lanes, stride=2 → span 16 cols) ---
             for (j = j0; j <= maxJ; j += 16) {
                 __m256i idx = _mm256_setr_epi32(
