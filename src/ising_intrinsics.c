@@ -213,8 +213,8 @@ void init_constants(void) {
 // ————— AVX2 red–black Metropolis update —————
 void update(int grid[L+2][L+2]) {
     const int maxJ = L - 14;  // highest j for which j+14 ≤ L
-
     for (int color = 0; color < 2; ++color) {
+        #pragma omp parallel for
         for (int i = 1; i <= L; ++i) {
             int *row  = &grid[i][0];
             int *rowU = &grid[i-1][0];
