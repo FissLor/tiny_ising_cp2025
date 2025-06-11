@@ -140,17 +140,19 @@ def build(preset, L=1000, TRAN=5):
     
     return binary_path, None
 
-def run(binary_path, preset, L=1000, TRAN=5):
+def run(binary_path, preset, L=1000, TRAN=5, Threads=1):
     """
-    Run the binary located at binary_path.
+    Run the binary located at binary_path under a given number of OMP threads.
     
     Returns a tuple: (metric, error)
     """
-    # Create the results directory for this run.
-    result_dir = os.path.abspath(os.path.join("results", f"{preset}_{L}"))
+    # Now include Threads in the directory name
+    result_dir = os.path.abspath(
+        os.path.join("results", f"{preset}_{L}_{TRAN}_{Threads}t")
+    )
     os.makedirs(result_dir, exist_ok=True)
     
-    run_cmd = f"{binary_path}"
+    run_cmd = f"OMP_NUM_THREADS={Threads} {binary_path}"
     try:
         run_result = subprocess.run(
             run_cmd,
@@ -162,11 +164,11 @@ def run(binary_path, preset, L=1000, TRAN=5):
         )
         if run_result.returncode != 0:
             return None, f"Run failed: {run_result.stderr}"
-        # Convert output to float as metric.
         metric = float(run_result.stdout.strip())
         return metric, None
     except Exception as e:
         return None, str(e)
+
 
 def profile_run(binary_path, preset, L=1000, stat_n = 5):
     """
@@ -205,7 +207,7 @@ def profile_run(binary_path, preset, L=1000, stat_n = 5):
     except Exception as e:
         return None, str(e)
 
-def build_and_run(preset, L=1000, TRAN=5):
+def build_and_run(preset, L=1000, TRAN=5, Threads=1):
     """
     Build and run the binary for a given preset and problem size L.
     
@@ -222,7 +224,7 @@ def build_and_run(preset, L=1000, TRAN=5):
             "error": build_error
         }
     
-    metric, run_error = run(binary_path, preset, L, TRAN)
+    metric, run_error = run(binary_path, preset, L, TRAN, Threads)
     if run_error is not None:
         return {
             "compiler": all_presets[preset]["compiler"],
@@ -330,6 +332,42 @@ def problem_size_test(L_values, presets=None):
             results.append(result)
     
     # Now the DataFrame will include a 'preset' column
+    return pd.DataFrame(results)
+
+def multithreading_test(Threads, presets=None, L_values=None, TRAN=5):
+    """
+    Test different OMP thread counts over multiple problem sizes L, running
+    each combination one at a time to avoid CPU overload.
+    
+    Parameters:
+        Threads (iterable of int): Different numbers of threads to test.
+        presets (list of str, optional): Presets to run. Defaults to ['intrinsics'].
+        L_values (iterable of int, optional): Problem sizes to test. Defaults to [1024].
+        TRAN (int): Monte Carlo step size.
+    
+    Returns:
+        pandas.DataFrame: Results with columns:
+            preset, compiler, optimization_flags, L, TRAN, Threads, metric, error.
+    """
+    if presets is None:
+        presets = ['intrinsics']
+    if L_values is None:
+        L_values = [1024]
+    
+    results = []
+    for preset in presets:
+        for L in L_values:
+            for T in Threads:
+                # build_and_run must accept L, TRAN, Threads
+                result = build_and_run(preset, L=L, TRAN=TRAN, Threads=T)
+                # inject metadata
+                result["preset"]   = preset
+                result["L"]        = L
+                result["Threads"]  = T
+                result["TRAN"]     = TRAN
+                print(result)
+                results.append(result)
+    
     return pd.DataFrame(results)
 
 def montecarlo_step_test(TRAN_values,L=384, presets=None):

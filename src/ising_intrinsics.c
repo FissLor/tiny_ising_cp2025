@@ -230,94 +230,98 @@ void init_constants(void) {
 // ————— AVX2 red–black Metropolis update —————
 void update(int grid[L+2][L+2]) {
     const int maxJ = L - 14;  // highest j for which j+14 ≤ L
-    for (int color = 0; color < 2; ++color) {
-        #pragma omp parallel for schedule(static)
-        for (int i = 1; i <= L; ++i) {
-            int *row  = &grid[i][0];
-            int *rowU = &grid[i-1][0];
-            int *rowD = &grid[i+1][0];
-            
-            // start at j0 so that (i+j)%2 == color
-            int j0 = ((i + color) & 1) ? 1 : 2;
-            int j;
-            
-            // --- vectorized blocks (8 lanes, stride=2 → span 16 cols) ---
-            for (j = j0; j <= maxJ; j += 16) {
-                __m256i idx = _mm256_setr_epi32(
-                    j, j+2, j+4, j+6,
-                    j+8, j+10, j+12, j+14
-                );
-                // gather center + neighbors
-                __m256i c  = _mm256_i32gather_epi32(row,  idx, 4);
-                __m256i up = _mm256_i32gather_epi32(rowU, idx, 4);
-                __m256i dn = _mm256_i32gather_epi32(rowD, idx, 4);
-                __m256i il = _mm256_sub_epi32(idx, _mm256_set1_epi32(1));
-                __m256i ir = _mm256_add_epi32(idx, _mm256_set1_epi32(1));
-                __m256i lt = _mm256_i32gather_epi32(row, il, 4);
-                __m256i rt = _mm256_i32gather_epi32(row, ir, 4);
+    #pragma omp parallel
+    {
+        for (int color = 0; color < 2; ++color) {
+            #pragma omp  for schedule(static)
+            for (int i = 1; i <= L; ++i) {
+                int *row  = &grid[i][0];
+                int *rowU = &grid[i-1][0];
+                int *rowD = &grid[i+1][0];
+                
+                // start at j0 so that (i+j)%2 == color
+                int j0 = ((i + color) & 1) ? 1 : 2;
+                int j;
+                
+                // --- vectorized blocks (8 lanes, stride=2 → span 16 cols) ---
+                for (j = j0; j <= maxJ; j += 16) {
+                    __m256i idx = _mm256_setr_epi32(
+                        j, j+2, j+4, j+6,
+                        j+8, j+10, j+12, j+14
+                    );
+                    // gather center + neighbors
+                    __m256i c  = _mm256_i32gather_epi32(row,  idx, 4);
+                    __m256i up = _mm256_i32gather_epi32(rowU, idx, 4);
+                    __m256i dn = _mm256_i32gather_epi32(rowD, idx, 4);
+                    __m256i il = _mm256_sub_epi32(idx, _mm256_set1_epi32(1));
+                    __m256i ir = _mm256_add_epi32(idx, _mm256_set1_epi32(1));
+                    __m256i lt = _mm256_i32gather_epi32(row, il, 4);
+                    __m256i rt = _mm256_i32gather_epi32(row, ir, 4);
 
-                // ΔE = 2 * c * (up + dn + lt + rt)
-                __m256i nb = _mm256_add_epi32(
-                                _mm256_add_epi32(up, dn),
-                                _mm256_add_epi32(lt, rt)
-                             );
-                __m256i dE = _mm256_mullo_epi32(
-                                V_TWO,
-                                _mm256_mullo_epi32(c, nb)
-                             );
-
-                // lookup P = exp_dE[(dE+8)>>2]
-                __m256i ti   = _mm256_srli_epi32(
-                                   _mm256_add_epi32(dE, V_ADD8), 2
-                               );
-                __m256  prob = _mm256_i32gather_ps(exp_dE, ti, 4);
-
-                // xorshift RNG → x
-                __m256i x = rng_state256;
-                x = _mm256_xor_si256(x, _mm256_slli_epi32(x, 13));
-                x = _mm256_xor_si256(x, _mm256_srli_epi32(x, 17));
-                x = _mm256_xor_si256(x, _mm256_slli_epi32(x, 5));
-                rng_state256 = x;
-
-                // normalize → randf ∈ [0,1)
-                __m256i xm    = _mm256_and_si256(x, V_RANDMAX);
-                __m256  randf = _mm256_mul_ps(
-                                    _mm256_cvtepi32_ps(xm),
-                                    V_INV_R
+                    // ΔE = 2 * c * (up + dn + lt + rt)
+                    __m256i nb = _mm256_add_epi32(
+                                    _mm256_add_epi32(up, dn),
+                                    _mm256_add_epi32(lt, rt)
+                                );
+                    __m256i dE = _mm256_mullo_epi32(
+                                    V_TWO,
+                                    _mm256_mullo_epi32(c, nb)
                                 );
 
-                // mask = (dE ≤ 0) || (randf < prob)
-                __m256  m1   = _mm256_cmp_ps(
-                                   _mm256_cvtepi32_ps(dE),
-                                   V_ZERO_F,
-                                   _CMP_LE_OQ
-                               );
-                __m256  m2   = _mm256_cmp_ps(randf, prob, _CMP_LT_OQ);
-                __m256  mask = _mm256_or_ps(m1, m2);
-                __m256i mskI = _mm256_castps_si256(mask);
+                    // lookup P = exp_dE[(dE+8)>>2]
+                    __m256i ti   = _mm256_srli_epi32(
+                                    _mm256_add_epi32(dE, V_ADD8), 2
+                                );
+                    __m256  prob = _mm256_i32gather_ps(exp_dE, ti, 4);
 
-                // blend: keep spin or flip
-                __m256i neg = _mm256_sub_epi32(_mm256_setzero_si256(), c);
-                __m256i out = _mm256_blendv_epi8(c, neg, mskI);
+                    // xorshift RNG → x
+                    __m256i x = rng_state256;
+                    x = _mm256_xor_si256(x, _mm256_slli_epi32(x, 13));
+                    x = _mm256_xor_si256(x, _mm256_srli_epi32(x, 17));
+                    x = _mm256_xor_si256(x, _mm256_slli_epi32(x, 5));
+                    rng_state256 = x;
 
-                // scatter via temporary array
-                int tmp[8];
-                _mm256_storeu_si256((__m256i*)tmp, out);
-                for (int k = 0; k < 8; ++k) {
-                    row[j + 2*k] = tmp[k];
+                    // normalize → randf ∈ [0,1)
+                    __m256i xm    = _mm256_and_si256(x, V_RANDMAX);
+                    __m256  randf = _mm256_mul_ps(
+                                        _mm256_cvtepi32_ps(xm),
+                                        V_INV_R
+                                    );
+
+                    // mask = (dE ≤ 0) || (randf < prob)
+                    __m256  m1   = _mm256_cmp_ps(
+                                    _mm256_cvtepi32_ps(dE),
+                                    V_ZERO_F,
+                                    _CMP_LE_OQ
+                                );
+                    __m256  m2   = _mm256_cmp_ps(randf, prob, _CMP_LT_OQ);
+                    __m256  mask = _mm256_or_ps(m1, m2);
+                    __m256i mskI = _mm256_castps_si256(mask);
+
+                    // blend: keep spin or flip
+                    __m256i neg = _mm256_sub_epi32(_mm256_setzero_si256(), c);
+                    __m256i out = _mm256_blendv_epi8(c, neg, mskI);
+
+                    // scatter via temporary array
+                    int tmp[8];
+                    _mm256_storeu_si256((__m256i*)tmp, out);
+                    for (int k = 0; k < 8; ++k) {
+                        row[j + 2*k] = tmp[k];
+                    }
                 }
-            }
 
-            // --- scalar tail for leftover j’s ---
-            for (; j <= L; j += 2) {
-                int  S   = row[j];
-                int  nb2 = rowU[j] + rowD[j] + row[j-1] + row[j+1];
-                int  dE2 = 2 * S * nb2;
-                float P  = exp_dE[(dE2 + 8) >> 2];
-                int   r  = next() % RAND_MAX;
-                float p  = r / (float)RAND_MAX;
-                if (dE2 <= 0 || p < P) {
-                    row[j] = -S;
+                // --- scalar tail for leftover j’s ---
+
+                for (; j <= L; j += 2) {
+                    int  S   = row[j];
+                    int  nb2 = rowU[j] + rowD[j] + row[j-1] + row[j+1];
+                    int  dE2 = 2 * S * nb2;
+                    float P  = exp_dE[(dE2 + 8) >> 2];
+                    int   r  = next() % RAND_MAX;
+                    float p  = r / (float)RAND_MAX;
+                    if (dE2 <= 0 || p < P) {
+                        row[j] = -S;
+                    }
                 }
             }
         }
@@ -328,18 +332,21 @@ void update(int grid[L+2][L+2]) {
 
 double calculate(int grid[L+2][L+2], int* M_max)
 {
-    int E = 0;
-    for (unsigned int i = 1; i <= L; ++i) {
-        for (unsigned int j = 1; j <= L; ++j) {
-            int spin = grid[i][j];
-            int spin_neigh_n = grid[i -1][j];
-            int spin_neigh_e = grid[i][j + 1];
-            int spin_neigh_w = grid[i][j-1];
-            int spin_neigh_s = grid[i + 1][j];
-
-            E += (spin * spin_neigh_n) + (spin * spin_neigh_e) + (spin * spin_neigh_w) + (spin * spin_neigh_s);
-            *M_max += spin;
-        }
+    long long E_acc = 0;
+    long long M_acc = 0;
+  
+    #pragma omp parallel for collapse(2) \
+             reduction(+:E_acc,M_acc) schedule(static)
+    for (int i = 1; i <= L; ++i) {
+      for (int j = 1; j <= L; ++j) {
+        int s     = grid[i][j];
+        int nbrs  = grid[i-1][j] + grid[i+1][j]
+                  + grid[i][j-1] + grid[i][j+1];
+        E_acc    += (long long)s * nbrs;
+        M_acc    += s;
+      }
     }
-    return -((double)E / 2.0);
+  
+    *M_max = (int)M_acc;
+    return -((double)E_acc / 2.0);
 }
